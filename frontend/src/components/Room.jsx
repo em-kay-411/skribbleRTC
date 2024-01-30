@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import { Peer } from "https://esm.sh/peerjs@1.5.2?bundle-deps"
+import { Peer } from 'peerjs'
 import { useNavigate } from 'react-router-dom';
 
 const Room = ({ roomId }) => {

@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -14,55 +13,38 @@ const io = socketIo(server, {
 const PORT = process.env.PORT || 3000;
 
 const rooms = {};
-
-const name = {};
+const name = [];
+const peerID = [];
 
 io.on('connection', (socket) => {
     console.log('Connected user');
 
-    // socket.on('joinRoom', (data) => {
-    //     if(rooms[data.roomID]){
-    //         socket.join(data.roomID);
-    //         name[socket.id] = {name : data.name};
-    //         rooms[data.roomID].users.push(socket.id);
-    //     }
-    //     else{
-    //         socket.emit('error');
-    //     }
-    // })
+    socket.on('create-room', (data) => {
+        rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id] };
+        name[socket.id] = data.username;
+        socket.join(data.roomID);
+    });
 
-    // socket.on('createRoom', (data) => {
-    //     if (!rooms[data.roomID]) {
-    //         socket.join(data.roomID);
-    //         name[socket.id] = {name : data.name};
-    //         rooms[data.roomID] = {creator : socket.id, users : [socket.id]};
-    //     } else {
-    //         socket.emit('displayRoomID', 'Room Already Exists');
-    //     }
-    // })
-
-    socket.on('join-room', (roomID, userId) => {
-        socket.join(roomID)
-        socket.to(roomID).emit('user-connected', userId);
-
-        socket.on('disconnect', () => {
-            io.to(roomID).emit('user-disconnected', userId)
-        })
+    socket.on('join-room', (data) => {
+        if (rooms[data.roomID]) {
+            if (rooms[data.roomID].users.length <= rooms[data.roomID].players) {
+                name[socket.id] = data.username;
+                rooms[data.roomID].users.push(socket.id);
+                socket.join(data.roomID);
+                socket.emit('roomData', rooms[data.roomID]);
+            }
+        }
     })
 
-    // socket.on('disconnect', () => {
-    //     for(const room in rooms){
-    //         if(room.creator === socket.id){
-    //             delete rooms[room];
-    //         }
-    //         else{
-    //             const index = rooms[room].users.indexOf(socket.id);
-    //             if(index !== -1){
-    //                 rooms[room].users.splice(index, 1);
-    //             }
-    //         }
-    //     }
-    // })
+    socket.on('join-peer-to-room', (data) => {
+        peerID[socket.id] = data.userID;
+        console.log('Joining peer to room')
+        socket.to(data.roomID).broadcast.emit('user-connected', data.userID);
+
+        socket.on('disconnect', () => {
+            io.to(data.roomID).emit('user-disconnected', data.userID);
+        })
+    })
 });
 
 server.listen(PORT, () => {

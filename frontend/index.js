@@ -6,12 +6,14 @@ const roundsElement = document.getElementById('rounds');
 const roomIDElement = document.getElementById('roomID');
 const createButton = document.getElementById('createButton');
 const joinButton = document.getElementById('joinButton');
+const videos = document.getElementById('video-container');
 let username, roomID, players, drawtime, rounds;
 
 createButton.onclick = () => {
     roomID = generateRoomID(12);
-    if(!username || !roomID || !players || !drawtime || !rounds){
+    if(!username || !players || !drawtime || !rounds){
         console.log('enter all the fields correctly.')
+        return;
     }
     createRoom(username, roomID, players, drawtime, rounds);
 }
@@ -33,6 +35,10 @@ usernameElement.onchange = () => {
     username = usernameElement.value
 }
 
+roomIDElement.onchange = () => {
+    roomID = roomIDElement.value;
+}
+
 playersElement.onchange = () => {
     if(playersElement.value > 8){
         playersElement.value = 8;
@@ -50,7 +56,6 @@ drawtimeElement.onchange = () => {
     if(drawtimeElement.value < 30){
         drawtimeElement.value = 30;
     }
-
     drawtime = drawtimeElement.value;
 }
 
@@ -61,6 +66,5 @@ roundsElement.onchange = () => {
     if(roundsElement.value < 1){
         roundsElement.value = 1;
     }
-
     rounds = roundsElement.value;
 }

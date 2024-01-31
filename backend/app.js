@@ -55,6 +55,15 @@ io.on('connection', (socket) => {
             socket.to(data.roomID).emit('user-connected', data.userID);
 
             socket.on('disconnect', () => {
+                if(rooms[data.roomID].creator === socket.id){
+                    delete rooms[data.roomID];
+                }
+                else{
+                    const index = rooms[data.roomID].users.indexOf(socket.id);
+                    if(index !== -1){
+                        rooms[data.roomID].users.splice(index, 1);
+                    }
+                }
                 io.to(data.roomID).emit('user-disconnected', data.userID);
             })
         }

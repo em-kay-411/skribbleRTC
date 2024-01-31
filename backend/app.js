@@ -8,51 +8,47 @@ const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
         origin: '*'
-    } 
+    }
 });
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3000;
 
 const rooms = {};
 
-const name  = {};
+const name = {};
 
 io.on('connection', (socket) => {
     console.log('Connected user');
 
-    socket.on('joinRoom', (data) => {
-        if(rooms[data.roomID]){
-            socket.join(data.roomID);
-            name[socket.id] = {name : data.name};
-            rooms[data.roomID].users.push(socket.id);
-            console.log(name, rooms);
-            socket.emit('gotoRoom');
-        }
-        else{
-            socket.emit('error');
-        }
-    })
+    // socket.on('joinRoom', (data) => {
+    //     if(rooms[data.roomID]){
+    //         socket.join(data.roomID);
+    //         name[socket.id] = {name : data.name};
+    //         rooms[data.roomID].users.push(socket.id);
+    //     }
+    //     else{
+    //         socket.emit('error');
+    //     }
+    // })
 
-    socket.on('createRoom', (data) => {
-        if (!rooms[data.roomID]) {
-            socket.join(data.roomID);
-            name[socket.id] = {name : data.name};
-            rooms[data.roomID] = {creator : socket.id, users : [socket.id]};
-            console.log(name, rooms);
-            socket.emit('gotoRoom');
-        } else {
-            socket.emit('displayRoomID', 'Room Already Exists');
-        }
-    })
+    // socket.on('createRoom', (data) => {
+    //     if (!rooms[data.roomID]) {
+    //         socket.join(data.roomID);
+    //         name[socket.id] = {name : data.name};
+    //         rooms[data.roomID] = {creator : socket.id, users : [socket.id]};
+    //     } else {
+    //         socket.emit('displayRoomID', 'Room Already Exists');
+    //     }
+    // })
 
-    socket.on('join-room', (roomId, userId) => {
-        socket.join(roomId)
-        socket.to(roomId).broadcast.emit('user-connected', userId)
-    
+    socket.on('join-room', (roomID, userId) => {
+        socket.join(roomID)
+        socket.to(roomID).emit('user-connected', userId);
+
         socket.on('disconnect', () => {
-          socket.to(roomId).broadcast.emit('user-disconnected', userId)
+            io.to(roomID).emit('user-disconnected', userId)
         })
-      })
+    })
 
     // socket.on('disconnect', () => {
     //     for(const room in rooms){
@@ -70,5 +66,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });

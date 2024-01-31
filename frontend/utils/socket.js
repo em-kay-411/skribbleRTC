@@ -15,3 +15,9 @@ socket.on('room-already-exists', () => {
 socket.on('invalid-room', () => {
     notify('no such room exists');
 })
+
+socket.on('roomData', (data) => {
+    players = data.players;
+    drawtime = data.drawtime;
+    rounds = data.rounds;
+})

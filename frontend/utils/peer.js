@@ -8,7 +8,6 @@ function setPeer() {
     const peers = {}
 
     peer.on('open', userID => {
-        console.log('joining peer to room')
         socket.emit('join-peer-to-room', ({ roomID, userID }))
     });
 

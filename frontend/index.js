@@ -7,12 +7,13 @@ const roomIDElement = document.getElementById('roomID');
 const createButton = document.getElementById('createButton');
 const joinButton = document.getElementById('joinButton');
 const videos = document.getElementById('video-container');
+const notification = document.getElementById('notification');
 let username, roomID, players, drawtime, rounds;
 
 createButton.onclick = () => {
     roomID = generateRoomID(12);
     if(!username || !players || !drawtime || !rounds){
-        console.log('enter all the fields correctly.')
+        notify('enter valid fields')
         return;
     }
     createRoom(username, roomID, players, drawtime, rounds);
@@ -20,7 +21,7 @@ createButton.onclick = () => {
 
 joinButton.onclick = () => {
     if(!username || !roomID){
-        console.log('enter all the fields correctly')
+        notify('enter valid fields')
     }
     joinRoom(username, roomID);
 }

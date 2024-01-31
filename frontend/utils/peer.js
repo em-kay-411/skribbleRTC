@@ -1,16 +1,17 @@
-const peer = new Peer(undefined, {
-    host: '/',
-    port: '3001'
-})
-const myVideo = document.createElement('video')
-myVideo.muted = true
-const peers = {}
-
 function setPeer() {
-    peer.on('open', userID => {
-        console.log('handling peer open')
-        socket.emit('join-peer-to-room', ({ roomID, userID }))
+    const peer = new Peer(undefined, {
+        host: '/',
+        port: '3001'
     })
+    const myVideo = document.createElement('video')
+    myVideo.muted = true
+    const peers = {}
+
+    peer.on('open', userID => {
+        console.log('joining peer to room')
+        socket.emit('join-peer-to-room', ({ roomID, userID }))
+    });
+
     navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true
@@ -26,33 +27,35 @@ function setPeer() {
         })
 
         socket.on('user-connected', userId => {
-            setTimeout(connectToNewUser,1000,userId,stream)
+            console.log('user connected');
+            setTimeout(connectToNewUser, 1000, userId, stream)
         })
     })
 
     socket.on('user-disconnected', userId => {
         if (peers[userId]) peers[userId].close()
     })
+
+    function connectToNewUser(userId, stream) {
+        const call = peer.call(userId, stream)
+        const video = document.createElement('video')
+        call.on('stream', userVideoStream => {
+            addVideoStream(video, userVideoStream)
+        })
+        call.on('close', () => {
+            video.remove()
+        })
+
+        peers[userId] = call
+    }
+
+    function addVideoStream(video, stream) {
+        video.srcObject = stream
+        video.addEventListener('loadedmetadata', () => {
+            video.play();
+        })
+        videos.append(video);
+        console.log('appended video')
+    }
 }
 
-function connectToNewUser(userId, stream) {
-    const call = peer.call(userId, stream)
-    const video = document.createElement('video')
-    call.on('stream', userVideoStream => {
-        addVideoStream(video, userVideoStream)
-    })
-    call.on('close', () => {
-        video.remove()
-    })
-
-    peers[userId] = call
-}
-
-function addVideoStream(video, stream) {
-    video.srcObject = stream
-    video.addEventListener('loadedmetadata', () => {
-        video.play();
-    })
-    videos.append(video);
-    console.log('appended video')
-}

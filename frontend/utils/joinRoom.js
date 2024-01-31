@@ -8,4 +8,6 @@ socket.on('roomData', (data) => {
     players = data.players;
     drawtime = data.drawtime;
     rounds = data.rounds;
+
+    console.log(players, drawtime, rounds);
 })

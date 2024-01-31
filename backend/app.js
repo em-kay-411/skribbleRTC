@@ -10,6 +10,7 @@ const io = socketIo(server, {
     }
 });
 
+
 const PORT = process.env.PORT || 3000;
 
 const rooms = {};
@@ -37,9 +38,9 @@ io.on('connection', (socket) => {
     })
 
     socket.on('join-peer-to-room', (data) => {
+        console.log('joining peer to room')
         peerID[socket.id] = data.userID;
-        console.log('Joining peer to room')
-        socket.to(data.roomID).broadcast.emit('user-connected', data.userID);
+        socket.to(data.roomID).emit('user-connected', data.userID);
 
         socket.on('disconnect', () => {
             io.to(data.roomID).emit('user-disconnected', data.userID);

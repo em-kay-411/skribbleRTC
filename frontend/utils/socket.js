@@ -33,7 +33,7 @@ socket.on('play-button-appear', () => {
 socket.on('game-started', () => {
     stage.style.display = 'flex';
     mountCanvas();
-    socket.emit('switch-turn')
+    // socket.emit('switch-turn')
 })
 
 socket.on('set-turn', (data) => {
@@ -45,4 +45,5 @@ socket.on('set-turn', (data) => {
 
 socket.on('allow-drawing', () => {
     writing = true;
+    guess.disabled = true;
 })

@@ -71,8 +71,17 @@ io.on('connection', (socket) => {
             }
 
             socket.on('start-game', () => {
+                console.log('start-game');
                 rooms[data.roomID].playing = true;
                 socket.to(data.roomID).emit('game-started');
+                const turn = (rooms[data.roomID].turn) % (rooms[data.roomID].users.length);
+                let currentRound = rooms[data.roomID].currentRound;
+                currentRound = currentRound + 1;
+                rooms[data.roomID].currentRound = currentRound;
+                const nameUser = name[rooms[data.roomID].creator];
+                io.to(data.roomID).emit('set-turn', ({ nameUser, currentRound }));
+                io.to(rooms[data.roomID].creator).emit('allow-drawing');
+                rooms[data.roomID].turn = turn + 1;
             });
 
             socket.on('drawLine', (coordinates) => {
@@ -80,26 +89,22 @@ io.on('connection', (socket) => {
             })
 
             socket.on('switch-turn', () => {
-                const turn = (rooms[data.roomID].turn) % (rooms[data.roomID].users.length + 1);
-                const num = turn - 1;
+                const turn = (rooms[data.roomID].turn) % (rooms[data.roomID].users.length);
+                console.log('switch-turn');
+                console.log('turn', turn);
                 let currentRound = rooms[data.roomID].currentRound;
-                if (num == -1) {
+                if (turn == 0) {
                     currentRound = currentRound + 1;
-                    if (currentRound > rooms[data.roomID].rounds) {
-                        io.to(data.roomID).emit('end-game');
-                    }
-                    else {
-                        rooms[data.roomID].currentRound = currentRound;
-                        const nameUser = name[rooms[data.roomID].creator];
-                        io.to(data.roomID).emit('set-turn', ({ nameUser, currentRound }));
-                        io.to(rooms[data.roomID].creator).emit('allow-drawing');
-                        rooms[data.roomID].turn = turn + 1;
-                    }
+                    rooms[data.roomID].currentRound = currentRound;
                 }
-                else {
-                    const nameUser = name[rooms[data.roomID].users[num]];
+
+                if(currentRound > rooms[data.roomID].rounds){
+                    io.to(data.roomID).emit('end-game');
+                }
+                else{
+                    const nameUser = name[rooms[data.roomID].users[turn]];
                     io.to(data.roomID).emit('set-turn', ({ nameUser, currentRound }));
-                    io.to(rooms[data.roomID].users[num]).emit('allow-drawing');
+                    io.to(rooms[data.roomID].users[turn]).emit('allow-drawing');
                     rooms[data.roomID].turn = turn + 1;
                 }
             })

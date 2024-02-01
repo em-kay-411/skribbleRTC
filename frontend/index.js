@@ -15,6 +15,7 @@ const timer = document.getElementById('timer');
 const stage = document.getElementById('stage');
 const tools = document.getElementById('tools');
 const canvasContainer = document.getElementById('canvas-container');
+const guess = document.getElementById('guess');
 let username, roomID, players, drawtime, rounds;
 let writing = false;
 

@@ -17,7 +17,7 @@ socket.on('invalid-room', () => {
 })
 
 socket.on('entry-prohibited', () => {
-    notify('Entry Prohibited');
+    notify('Entry Prohibited! The room owner has started the game');
 })
 
 socket.on('roomData', (data) => {

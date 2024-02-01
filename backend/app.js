@@ -24,6 +24,7 @@ io.on('connection', (socket) => {
         if(!rooms[data.roomID]){
             rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing:false, currentRound: 1 };
             name[socket.id] = data.username;
+            console.log(rooms[data.roomID].creator);
             socket.join(data.roomID);
             socket.emit('accessGranted')
         }
@@ -53,11 +54,16 @@ io.on('connection', (socket) => {
         else {
             socket.emit('invalid-room')
         }
+    });
+
+    socket.on('get-peer-name', (id) => {
+        const peerName = name[peerID[id]];
+        socket.emit('peer-name', peerName);
     })
 
     socket.on('join-peer-to-room', (data) => {
         if (rooms[data.roomID].users.length <= rooms[data.roomID].players) {
-            peerID[socket.id] = data.userID;
+            peerID[data.userID] = socket.id;
             socket.to(data.roomID).emit('user-connected', data.userID);
 
             if(rooms[data.roomID].users.length == 2){
@@ -69,7 +75,10 @@ io.on('connection', (socket) => {
             })
 
             socket.on('disconnect', () => {
-                if(rooms[data.roomID].creator === socket.id){
+                if(!rooms[data.roomID].creator){
+                    console.log('need to handle')                   // Need to handle
+                }
+                else if(rooms[data.roomID].creator === socket.id){
                     delete rooms[data.roomID];
                 }
                 else{

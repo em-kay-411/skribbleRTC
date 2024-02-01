@@ -12,13 +12,16 @@
     <script defer src="./utils/socket.js"></script>
     <script defer src="./utils/notify.js"></script>
     <script defer src="./utils/generateID.js"></script>
+    <script defer src="./utils/createVideoDiv.js"></script>
+    <script defer src="./utils/getPeerName.js"></script>
     <script defer src="./utils/routeToRoom.js"></script>
     <script defer src="./utils/createRoom.js"></script>
     <script defer src="./utils/joinRoom.js"></script>
     <script defer src="./utils/peer.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Delius&family=Homemade+Apple&family=Pangolin&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Delius&family=Homemade+Apple&family=Pangolin&display=swap"
+        rel="stylesheet">
 
     <style>
         body {
@@ -89,7 +92,7 @@
             border-radius: 50%;
         }
 
-        label {
+        .input-labels {
             font-size: 1.5rem;
             font-family: 'Pangolin', cursive;
             color: white;
@@ -99,19 +102,7 @@
             cursor: pointer;
         }
 
-        #video-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 300px);
-            grid-auto-rows: 300px;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        #notification{
+        #notification {
             position: absolute;
             bottom: 2%;
             left: 50%;
@@ -122,7 +113,7 @@
             color: white;
         }
 
-        #playButton{
+        #playButton {
             display: none;
             bottom: 10%;
             position: absolute;
@@ -135,6 +126,27 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
         }
+
+        label {
+            text-align: center;
+            transform: translate(0, 100%);
+            position: relative;
+            font-family: 'Pangolin', cursive;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.263);
+        }
+
+        .video {
+            margin: 2px 5px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #video-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 
@@ -143,11 +155,11 @@
         <input type="text" id="username" name="username" placeholder="username">
         <div class="createRoom">
             <h1 class="heading">create room</h1>
-            <label for="players">players</label>
+            <label class="input-labels" for="players">players</label>
             <input type="number" id="players" min="1" max="8" name="players" placeholder="no of players">
-            <label for="drawtime" >drawtime</label>
+            <label class="input-labels" for="drawtime">drawtime</label>
             <input type="number" id="drawtime" min="30" max="120" name="drawtime" placeholder="drawtime">
-            <label for="rounds">rounds</label>
+            <label class="input-labels" for="rounds">rounds</label>
             <input type="number" id="rounds" min="1" max="10" name="rounds" placeholder="rounds">
             <button type="submit" class="go" id="createButton">
                 GO

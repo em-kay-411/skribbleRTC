@@ -3,8 +3,9 @@ function setPeer() {
         host: '/',
         port: '3001'
     })
-    const myVideo = document.createElement('video')
-    myVideo.muted = true
+    const myVideo = document.createElement('video');
+    myVideo.muted = true;
+    const myVideoDiv = createVideoDiv(myVideo, 'you');
     const peers = {}
 
     peer.on('open', userID => {
@@ -15,13 +16,17 @@ function setPeer() {
         video: true,
         audio: true
     }).then(stream => {
-        addVideoStream(myVideo, stream)
+        addVideoStream(myVideoDiv, myVideo, stream)
 
         peer.on('call', call => {
             call.answer(stream)
-            const video = document.createElement('video')
+            const video = document.createElement('video');
+            let videoDiv;
+            getPeerName(call.peer).then((name) => {
+                videoDiv = createVideoDiv(video, name);
+            });
             call.on('stream', userVideoStream => {
-                addVideoStream(video, userVideoStream)
+                addVideoStream(videoDiv, video, userVideoStream)
             })
         })
 
@@ -36,24 +41,28 @@ function setPeer() {
     })
 
     function connectToNewUser(userId, stream) {
-        const call = peer.call(userId, stream)
-        const video = document.createElement('video')
+        const call = peer.call(userId, stream);
+        const video = document.createElement('video');
+        let videoDiv;
+        getPeerName(call.peer).then((name) => {
+            videoDiv = createVideoDiv(video, name);
+        });
         call.on('stream', userVideoStream => {
-            addVideoStream(video, userVideoStream)
+            addVideoStream(videoDiv, video, userVideoStream)
         })
         call.on('close', () => {
-            video.remove()
+            videoDiv.remove()
         })
 
         peers[userId] = call
     }
 
-    function addVideoStream(video, stream) {
+    function addVideoStream(videoDiv, video, stream) {
         video.srcObject = stream
         video.addEventListener('loadedmetadata', () => {
             video.play();
         })
-        videos.append(video);
+        videos.append(videoDiv);
         console.log('appended video')
     }
 }

@@ -9,7 +9,14 @@ const joinButton = document.getElementById('joinButton');
 const playButton = document.getElementById('playButton');
 const videos = document.getElementById('video-container');
 const notification = document.getElementById('notification');
-let username, roomID, players, drawtime, rounds;
+const artist = document.getElementById('artist');
+const round = document.getElementById('round');
+const timer = document.getElementById('timer');
+const stage = document.getElementById('stage');
+const tools = document.getElementById('tools');
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+let username, roomID, players, drawtime, rounds, writing;
 
 createButton.onclick = () => {
     roomID = generateRoomID(12);
@@ -74,4 +81,5 @@ roundsElement.onchange = () => {
 playButton.onclick = () => {
     socket.emit('start-game');
     playButton.style.display = 'none';
+    stage.style.display = 'flex';
 }

@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
 
     socket.on('create-room', (data) => {
         if(!rooms[data.roomID]){
-            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing:false, currentRound: 1 };
+            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing:false, currentRound: 0, turn: 0 };
             name[socket.id] = data.username;
             console.log(rooms[data.roomID].creator);
             socket.join(data.roomID);
@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
 
     socket.on('join-room', (data) => {
         if (rooms[data.roomID]) {
-            console.log(rooms[data.roomID].users.length, rooms[data.roomID].players);
+            // console.log(rooms[data.roomID].users.length, rooms[data.roomID].players);
             if ((!rooms[data.roomID].playing) && (rooms[data.roomID].users.length < rooms[data.roomID].players)) {
                 console.log(rooms[data.roomID].users.length);
                 name[socket.id] = data.username;
@@ -72,6 +72,27 @@ io.on('connection', (socket) => {
 
             socket.on('start-game', () => {
                 rooms[data.roomID].playing = true;
+                socket.to(data.roomID).emit('game-started');
+            })
+
+            socket.on('switch-turn', () => {
+                const turn = (rooms[data.roomID].turn)%(rooms[data.roomID].users.length + 1);
+                const num = turn - 1;
+                let currentRound = rooms[data.roomID].currentRound;
+                if(num == -1){
+                    currentRound = currentRound + 1;
+                    rooms[data.roomID].currentRound = currentRound;
+                    const nameUser = name[rooms[data.roomID].creator];
+                    io.to(data.roomID).emit('set-turn', ({nameUser, currentRound}));
+                    io.to(rooms[data.roomID].creator).emit('allow-drawing');
+                    rooms[data.roomID].turn = turn + 1;
+                }
+                else{
+                    const nameUser = name[rooms[data.roomID].users[num]];
+                    io.to(data.roomID).emit('set-turn', ({nameUser, currentRound}));
+                    io.to(rooms[data.roomID].users[num]).emit('allow-drawing');
+                    rooms[data.roomID].turn = turn + 1;
+                }
             })
 
             socket.on('disconnect', () => {

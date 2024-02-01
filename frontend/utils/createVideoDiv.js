@@ -4,6 +4,7 @@ function createVideoDiv(video, name) {
 
     const label = document.createElement('label');
     label.setAttribute('for', 'name');
+    label.className = 'video-label'
     label.textContent = `${name}`;
 
     const videoDiv = document.createElement('div');

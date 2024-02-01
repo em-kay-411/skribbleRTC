@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>skribbleRTC</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script defer src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
     <script defer src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script defer src="index.js"></script>
     <script defer src="./utils/socket.js"></script>
     <script defer src="./utils/notify.js"></script>
     <script defer src="./utils/generateID.js"></script>
+    <script defer src="./utils/canvas.js"></script>
+    <script defer src="./utils/startTimer.js"></script>
     <script defer src="./utils/createVideoDiv.js"></script>
     <script defer src="./utils/getPeerName.js"></script>
     <script defer src="./utils/routeToRoom.js"></script>
@@ -127,7 +130,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
         }
 
-        label {
+        .video-label {
             text-align: center;
             transform: translate(0, 100%);
             position: relative;
@@ -137,6 +140,8 @@
         }
 
         .video {
+            border: 5px white;
+            border-radius: 5px;
             margin: 2px 5px;
             display: flex;
             flex-direction: column;
@@ -146,6 +151,76 @@
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
+        }
+
+        #canvas {
+            width: 50%;
+            border-radius: 4%;
+            background-color: white;
+        }
+
+        #blue {
+            background-color: blue;
+        }
+
+        #green {
+            background-color: green;
+        }
+
+        #yellow {
+            background-color: yellow;
+        }
+
+        #red {
+            background-color: red;
+        }
+
+        #orange {
+            background-color: orange;
+        }
+
+        #black {
+            background-color: black;
+        }
+
+        #white {
+            background-color: white;
+        }
+
+        #artist {
+            margin: 10% 10%;
+            margin: 5px 5px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        #timer {
+            margin: 10% 10%;
+            color: white;
+            font-size: 2rem;
+        }
+
+        #round {
+            margin: 10% 10%;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .stage {
+            display: none;
+            flex-direction: row;
+        }
+
+        .tools button {
+            margin: 2px 2px;
+            border: none;
+            width: 30px;
+            height: 30px;
+        }
+
+        .colors{
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
@@ -184,14 +259,27 @@
     <div class="stage" id="stage">
         <canvas id="canvas"></canvas>
         <div class="tools" id="tools">
-
+            <button id="write"><i class="fa fa-pencil"></i></button>
+            <button id="erase"><i class="fa fa-eraser"></i></button>
+            <div class="colors">
+                <button id="blue"></button>
+                <button id="green"></button>
+                <button id="yellow"></button>
+                <button id="red"></button>
+                <button id="orange"></button>
+                <button id="black"></button>
+                <button id="white"></button>
+            </div>
         </div>
-        <div class="status" id="status"></div>
-        <div id="timer"></div>
-        <div class="colors" id="colors"></div>
+        <div class="stats">
+            <div class="artist" id="artist"></div>
+            <div class="round" id="round"></div>
+            <div id="timer"><i class="fa fa-clock-o"></i></div>
+            <input type="text" id="guess" name="guess">
+        </div>
         <div id="rankings"></div>
+        <div class="notification" id="notification"></div>
     </div>
-    <div class="notification" id="notification"></div>
 </body>
 
 </html>

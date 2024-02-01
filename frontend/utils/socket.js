@@ -29,3 +29,18 @@ socket.on('roomData', (data) => {
 socket.on('play-button-appear', () => {
     playButton.style.display = 'block';
 })
+
+socket.on('game-started', () => {
+    stage.style.display = 'flex';
+    socket.emit('switch-turn')
+})
+
+socket.on('set-turn', (data) => {
+    artist.innerHTML = `${data.nameUser} is drawing`;
+    round.innerHTML = `${data.currentRound}/${rounds}`
+    startTimer(drawtime);
+})
+
+socket.on('allow-drawing', () => {
+    writing = true;
+})

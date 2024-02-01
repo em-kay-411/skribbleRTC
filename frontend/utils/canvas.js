@@ -1,5 +1,6 @@
 function mountCanvas() {
-    const canvas = document.getElementById("canvas");
+    const canvas = document.createElement('canvas');
+    canvasContainer.append(canvas);
     const context = canvas.getContext("2d");
     document.oncontextmenu = function () {
         return false;
@@ -43,7 +44,7 @@ function mountCanvas() {
         cursorX = event.clientX - canvas.getBoundingClientRect().left;
         cursorY = event.clientY - canvas.getBoundingClientRect().top;
 
-        if (leftMouseDown) {
+        if (leftMouseDown && writing) {
             drawLine(prevCursorX, prevCursorY, cursorX, cursorY);
         }
         prevCursorX = cursorX;

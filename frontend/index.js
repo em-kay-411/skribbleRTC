@@ -16,6 +16,8 @@ const stage = document.getElementById('stage');
 const tools = document.getElementById('tools');
 const canvasContainer = document.getElementById('canvas-container');
 const guess = document.getElementById('guess');
+const word = document.getElementById('word');
+let answer = '';
 let username, roomID, players, drawtime, rounds;
 let writing = false;
 
@@ -86,4 +88,11 @@ playButton.onclick = () => {
     playButton.style.display = 'none';
     stage.style.display = 'flex';
     mountCanvas();
+}
+
+guess.oninput = () => {
+    if(guess.value === answer){
+        word.innerHTML = `you're right : ${answer}`;
+        guess.disabled = true;
+    }
 }

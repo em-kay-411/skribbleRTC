@@ -9,10 +9,11 @@ function startTimer(drawtime) {
             clearInterval(timerInterval);
             if (writing) {
                 writing = false;
-                guess.disabled = false;
+                guess.disabled = false;                
                 console.log('disabled writing');
                 socket.emit('switch-turn');
             }
+            word.innerHTML = '';
 
         }
     }

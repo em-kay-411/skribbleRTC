@@ -73,6 +73,10 @@ io.on('connection', (socket) => {
             socket.on('start-game', () => {
                 rooms[data.roomID].playing = true;
                 socket.to(data.roomID).emit('game-started');
+            });
+
+            socket.on('drawLine', (coordinates) => {
+                socket.to(data.roomID).emit('drawLine', (coordinates));
             })
 
             socket.on('switch-turn', () => {

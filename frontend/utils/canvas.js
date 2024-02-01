@@ -46,6 +46,7 @@ function mountCanvas() {
 
         if (leftMouseDown && writing) {
             drawLine(prevCursorX, prevCursorY, cursorX, cursorY);
+            socket.emit('drawLine', ({prevCursorX, prevCursorY, cursorX, cursorY}));
         }
         prevCursorX = cursorX;
         prevCursorY = cursorY;
@@ -62,4 +63,15 @@ function mountCanvas() {
         context.stroke();
     }
 
+    socket.on('drawLine', (coordinates)=>{
+        drawLine(coordinates.prevCursorX, coordinates.prevCursorY, coordinates.cursorX, coordinates.cursorY);
+    })
+}
+
+function cleanCanvas(){
+    const canvas = document.getElementsByTagName('canvas')[0];
+    const context = canvas.getContext("2d");
+
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, canvas.width, canvas.height);
 }

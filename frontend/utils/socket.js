@@ -37,6 +37,7 @@ socket.on('game-started', () => {
 })
 
 socket.on('set-turn', (data) => {
+    cleanCanvas();
     artist.innerHTML = `${data.nameUser} is drawing`;
     round.innerHTML = `${data.currentRound}/${rounds}`
     startTimer(drawtime);

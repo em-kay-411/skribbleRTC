@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script defer src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
     <script defer src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script defer src="./utils/canvas.js"></script>
     <script defer src="index.js"></script>
     <script defer src="./utils/socket.js"></script>
     <script defer src="./utils/notify.js"></script>
     <script defer src="./utils/generateID.js"></script>
-    <script defer src="./utils/canvas.js"></script>
     <script defer src="./utils/startTimer.js"></script>
     <script defer src="./utils/createVideoDiv.js"></script>
     <script defer src="./utils/getPeerName.js"></script>
@@ -153,11 +153,11 @@
             flex-wrap: wrap;
         }
 
-        #canvas {
+        /* #canvas-container {
             width: 50%;
-            border-radius: 4%;
-            background-color: white;
-        }
+            height: 100%;
+            z-index: 10;
+        } */
 
         #blue {
             background-color: blue;
@@ -218,9 +218,14 @@
             height: 30px;
         }
 
-        .colors{
+        .colors {
             display: flex;
             flex-direction: column;
+        }
+
+        #canvas-container {
+            width: 50%;
+            height: 300px;
         }
     </style>
 </head>
@@ -257,7 +262,9 @@
         <h1 class="room" id="room"></h1>
     </div>
     <div class="stage" id="stage">
-        <canvas id="canvas"></canvas>
+        <div id="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
         <div class="tools" id="tools">
             <button id="write"><i class="fa fa-pencil"></i></button>
             <button id="erase"><i class="fa fa-eraser"></i></button>

@@ -21,14 +21,14 @@ io.on('connection', (socket) => {
     console.log('Connected user');
 
     socket.on('create-room', (data) => {
-        if(!rooms[data.roomID]){
-            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing:false, currentRound: 0, turn: 0 };
+        if (!rooms[data.roomID]) {
+            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing: false, currentRound: 0, turn: 0 };
             name[socket.id] = data.username;
             console.log(rooms[data.roomID].creator);
             socket.join(data.roomID);
             socket.emit('accessGranted')
         }
-        else{
+        else {
             socket.emit('room-already-exists');
         }
     });
@@ -44,10 +44,10 @@ io.on('connection', (socket) => {
                 socket.emit('roomData', rooms[data.roomID]);
                 socket.emit('accessGranted')
             }
-            else if(rooms[data.roomID].playing){
+            else if (rooms[data.roomID].playing) {
                 socket.emit('entry-prohibited');
             }
-            else{
+            else {
                 socket.emit('roomFull');
             }
         }
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
             peerID[data.userID] = socket.id;
             socket.to(data.roomID).emit('user-connected', data.userID);
 
-            if(rooms[data.roomID].users.length == 2){
+            if (rooms[data.roomID].users.length == 2) {
                 socket.to(rooms[data.roomID].creator).emit('play-button-appear');
             }
 
@@ -76,35 +76,40 @@ io.on('connection', (socket) => {
             })
 
             socket.on('switch-turn', () => {
-                const turn = (rooms[data.roomID].turn)%(rooms[data.roomID].users.length + 1);
+                const turn = (rooms[data.roomID].turn) % (rooms[data.roomID].users.length + 1);
                 const num = turn - 1;
                 let currentRound = rooms[data.roomID].currentRound;
-                if(num == -1){
+                if (num == -1) {
                     currentRound = currentRound + 1;
-                    rooms[data.roomID].currentRound = currentRound;
-                    const nameUser = name[rooms[data.roomID].creator];
-                    io.to(data.roomID).emit('set-turn', ({nameUser, currentRound}));
-                    io.to(rooms[data.roomID].creator).emit('allow-drawing');
-                    rooms[data.roomID].turn = turn + 1;
+                    if (currentRound > rooms[data.roomID].rounds) {
+                        io.to(data.roomID).emit('end-game');
+                    }
+                    else {
+                        rooms[data.roomID].currentRound = currentRound;
+                        const nameUser = name[rooms[data.roomID].creator];
+                        io.to(data.roomID).emit('set-turn', ({ nameUser, currentRound }));
+                        io.to(rooms[data.roomID].creator).emit('allow-drawing');
+                        rooms[data.roomID].turn = turn + 1;
+                    }
                 }
-                else{
+                else {
                     const nameUser = name[rooms[data.roomID].users[num]];
-                    io.to(data.roomID).emit('set-turn', ({nameUser, currentRound}));
+                    io.to(data.roomID).emit('set-turn', ({ nameUser, currentRound }));
                     io.to(rooms[data.roomID].users[num]).emit('allow-drawing');
                     rooms[data.roomID].turn = turn + 1;
                 }
             })
 
             socket.on('disconnect', () => {
-                if(!rooms[data.roomID].creator){
+                if (!rooms[data.roomID].creator) {
                     console.log('need to handle')                   // Need to handle
                 }
-                else if(rooms[data.roomID].creator === socket.id){
+                else if (rooms[data.roomID].creator === socket.id) {
                     delete rooms[data.roomID];
                 }
-                else{
+                else {
                     const index = rooms[data.roomID].users.indexOf(socket.id);
-                    if(index !== -1){
+                    if (index !== -1) {
                         rooms[data.roomID].users.splice(index, 1);
                     }
                 }

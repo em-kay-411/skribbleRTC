@@ -14,13 +14,14 @@ const round = document.getElementById('round');
 const timer = document.getElementById('timer');
 const stage = document.getElementById('stage');
 const tools = document.getElementById('tools');
-const canvas = document.getElementById("canvas");
-const context = canvas.getContext("2d");
+const canvasContainer = document.getElementById('canvas-container');
 let username, roomID, players, drawtime, rounds, writing;
+
+
 
 createButton.onclick = () => {
     roomID = generateRoomID(12);
-    if(!username || !players || !drawtime || !rounds){
+    if (!username || !players || !drawtime || !rounds) {
         notify('enter valid fields')
         return;
     }
@@ -28,18 +29,18 @@ createButton.onclick = () => {
 }
 
 joinButton.onclick = () => {
-    if(!username || !roomID){
+    if (!username || !roomID) {
         notify('enter valid fields')
     }
     joinRoom(username, roomID);
 }
 
 usernameElement.onchange = () => {
-    if(usernameElement.value > 8){
+    if (usernameElement.value > 8) {
         usernameElement.value = 8;
     }
-    if(usernameElement.value < 1){
-        usernameElement.value =1
+    if (usernameElement.value < 1) {
+        usernameElement.value = 1
     }
     username = usernameElement.value
 }
@@ -49,30 +50,30 @@ roomIDElement.onchange = () => {
 }
 
 playersElement.onchange = () => {
-    if(playersElement.value > 8){
+    if (playersElement.value > 8) {
         playersElement.value = 8;
     }
-    if(playersElement.value < 1){
-        playersElement.value =1
+    if (playersElement.value < 1) {
+        playersElement.value = 1
     }
     players = playersElement.value
 }
 
 drawtimeElement.onchange = () => {
-    if(drawtimeElement.value > 120){
+    if (drawtimeElement.value > 120) {
         drawtimeElement.value = 120;
     }
-    if(drawtimeElement.value < 30){
+    if (drawtimeElement.value < 30) {
         drawtimeElement.value = 30;
     }
     drawtime = drawtimeElement.value;
 }
 
 roundsElement.onchange = () => {
-    if(roundsElement.value > 10){
+    if (roundsElement.value > 10) {
         roundsElement.value = 10;
     }
-    if(roundsElement.value < 1){
+    if (roundsElement.value < 1) {
         roundsElement.value = 1;
     }
     rounds = roundsElement.value;
@@ -82,4 +83,5 @@ playButton.onclick = () => {
     socket.emit('start-game');
     playButton.style.display = 'none';
     stage.style.display = 'flex';
+    mountCanvas();
 }

@@ -32,6 +32,7 @@ socket.on('play-button-appear', () => {
 
 socket.on('game-started', () => {
     stage.style.display = 'flex';
+    mountCanvas();
     socket.emit('switch-turn')
 })
 

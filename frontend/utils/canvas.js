@@ -10,7 +10,6 @@ function mountCanvas() {
     let cursorY;
     let prevCursorX;
     let prevCursorY;
-    let color = 'black';
 
     function redrawCanvas() {
         canvas.width = canvasContainer.clientWidth;
@@ -45,8 +44,8 @@ function mountCanvas() {
         cursorY = event.clientY - canvas.getBoundingClientRect().top;
 
         if (leftMouseDown && writing) {
-            drawLine(prevCursorX, prevCursorY, cursorX, cursorY);
-            socket.emit('drawLine', ({prevCursorX, prevCursorY, cursorX, cursorY}));
+            drawLine(prevCursorX, prevCursorY, cursorX, cursorY, color, shape);
+            socket.emit('drawLine', ({prevCursorX, prevCursorY, cursorX, cursorY, color, shape}));
         }
         prevCursorX = cursorX;
         prevCursorY = cursorY;
@@ -54,17 +53,24 @@ function mountCanvas() {
     function onMouseUp() {
         leftMouseDown = false;
     }
-    function drawLine(x0, y0, x1, y1) {
+    function drawLine(x0, y0, x1, y1, color, shape) {
         context.beginPath();
         context.moveTo(x0, y0);
         context.lineTo(x1, y1);
-        context.strokeStyle = color;
-        context.lineWidth = 2;
+
+        if(shape === 'freeform'){
+            context.strokeStyle = color;
+            context.lineWidth = 2;
+        }
+        else{
+            context.strokeStyle = 'white';
+            context.lineWidth = 6;
+        }
         context.stroke();
     }
 
     socket.on('drawLine', (coordinates)=>{
-        drawLine(coordinates.prevCursorX, coordinates.prevCursorY, coordinates.cursorX, coordinates.cursorY);
+        drawLine(coordinates.prevCursorX, coordinates.prevCursorY, coordinates.cursorX, coordinates.cursorY, coordinates.color, coordinates.shape);
     })
 }
 

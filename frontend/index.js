@@ -6,6 +6,7 @@ const roundsElement = document.getElementById('rounds');
 const roomIDElement = document.getElementById('roomID');
 const createButton = document.getElementById('createButton');
 const joinButton = document.getElementById('joinButton');
+const playButton = document.getElementById('playButton');
 const videos = document.getElementById('video-container');
 const notification = document.getElementById('notification');
 let username, roomID, players, drawtime, rounds;
@@ -68,4 +69,9 @@ roundsElement.onchange = () => {
         roundsElement.value = 1;
     }
     rounds = roundsElement.value;
+}
+
+playButton.onclick = () => {
+    socket.emit('start-game');
+    playButton.style.display = 'none';
 }

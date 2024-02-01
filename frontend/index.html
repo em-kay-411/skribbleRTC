@@ -121,6 +121,20 @@
             font-family: 'Delius', cursive;
             color: white;
         }
+
+        #playButton{
+            display: none;
+            bottom: 10%;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0);
+            background-color: white;
+            color: black;
+            font-family: 'Pangolin', cursive;
+            font-size: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+        }
     </style>
 </head>
 
@@ -148,8 +162,22 @@
             </button>
         </div>
     </div>
+
+    <button class="play" id="playButton">
+        Start Game
+    </button>
     <div id="video-container">
         <h1 class="room" id="room"></h1>
+    </div>
+    <div class="stage" id="stage">
+        <canvas id="canvas"></canvas>
+        <div class="tools" id="tools">
+
+        </div>
+        <div class="status" id="status"></div>
+        <div id="timer"></div>
+        <div class="colors" id="colors"></div>
+        <div id="rankings"></div>
     </div>
     <div class="notification" id="notification"></div>
 </body>

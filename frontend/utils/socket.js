@@ -16,8 +16,16 @@ socket.on('invalid-room', () => {
     notify('no such room exists');
 })
 
+socket.on('entry-prohibited', () => {
+    notify('Entry Prohibited');
+})
+
 socket.on('roomData', (data) => {
     players = data.players;
     drawtime = data.drawtime;
     rounds = data.rounds;
+})
+
+socket.on('play-button-appear', () => {
+    playButton.style.display = 'block';
 })

@@ -22,9 +22,10 @@ io.on('connection', (socket) => {
 
     socket.on('create-room', (data) => {
         if(!rooms[data.roomID]){
-            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id] };
+            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing:false, currentRound: 1 };
             name[socket.id] = data.username;
             socket.join(data.roomID);
+            socket.emit('accessGranted')
         }
         else{
             socket.emit('room-already-exists');
@@ -33,12 +34,17 @@ io.on('connection', (socket) => {
 
     socket.on('join-room', (data) => {
         if (rooms[data.roomID]) {
-            if (rooms[data.roomID].users.length < rooms[data.roomID].players) {
+            console.log(rooms[data.roomID].users.length, rooms[data.roomID].players);
+            if ((!rooms[data.roomID].playing) && (rooms[data.roomID].users.length < rooms[data.roomID].players)) {
                 console.log(rooms[data.roomID].users.length);
                 name[socket.id] = data.username;
                 rooms[data.roomID].users.push(socket.id);
                 socket.join(data.roomID);
                 socket.emit('roomData', rooms[data.roomID]);
+                socket.emit('accessGranted')
+            }
+            else if(rooms[data.roomID].playing){
+                socket.emit('entry-prohibited');
             }
             else{
                 socket.emit('roomFull');
@@ -53,6 +59,14 @@ io.on('connection', (socket) => {
         if (rooms[data.roomID].users.length <= rooms[data.roomID].players) {
             peerID[socket.id] = data.userID;
             socket.to(data.roomID).emit('user-connected', data.userID);
+
+            if(rooms[data.roomID].users.length == 2){
+                socket.to(rooms[data.roomID].creator).emit('play-button-appear');
+            }
+
+            socket.on('start-game', () => {
+                rooms[data.roomID].playing = true;
+            })
 
             socket.on('disconnect', () => {
                 if(rooms[data.roomID].creator === socket.id){

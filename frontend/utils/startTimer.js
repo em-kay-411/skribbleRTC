@@ -9,14 +9,31 @@ function startTimer(drawtime) {
             clearInterval(timerInterval);
             if (writing) {
                 writing = false;
-                guess.disabled = false;                
-                console.log('disabled writing');
+                guess.disabled = false;
+                // console.log('disabled writing');
                 socket.emit('switch-turn');
             }
             word.innerHTML = '';
 
         }
     }
+
+    socket.on('all-answer-interrupt-writer', () => {
+        clearInterval(timerInterval);
+        writing = false;
+        guess.disabled = false;
+        // console.log('all-answer-interrupt-writer');
+        socket.emit('switch-turn');
+        word.innerHTML = '';
+    })
+
+
+    socket.on('all-answer-interrupt-guesser', () => {
+        clearInterval(timerInterval);
+        // console.log('all-answer-interrupt-guesser');
+        writing = false;
+        word.innerHTML = '';
+    })
 
     const timerInterval = setInterval(() => {
         updateTimer();

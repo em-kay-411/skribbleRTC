@@ -1,6 +1,6 @@
 function createVideoDiv(video, name) {
     video.name = name;   
-    video.style.height = '40vh'
+    video.style.height = '30vh'
 
     const label = document.createElement('label');
     label.setAttribute('for', 'name');

@@ -46,6 +46,7 @@ socket.on('set-turn', (data) => {
 socket.on('allow-drawing', () => {
     answer = '';
     writing = true;
+    artist.innerHTML = `your turn`;
     guess.disabled = true;
 })
 
@@ -53,11 +54,6 @@ socket.on('display-word', (data) => {
     word.innerHTML = `${data}`;
 })
 
-socket.on('pause-user', (data) => {
-    guess.disabled = true;
-    word.innerHTML = `correctly guessed : ${data}`;
-})
-
 socket.on('send-answer', (word) => {
     answer = word;
-})
+});

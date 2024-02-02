@@ -31,7 +31,7 @@ function setPeer() {
         })
 
         socket.on('user-connected', userId => {
-            console.log('user connected');
+            // console.log('user connected');
             setTimeout(connectToNewUser, 1000, userId, stream)
         })
     })
@@ -63,7 +63,7 @@ function setPeer() {
             video.play();
         })
         videos.append(videoDiv);
-        console.log('appended video')
+        // console.log('appended video')
     }
 }
 

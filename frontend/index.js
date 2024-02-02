@@ -79,7 +79,8 @@ createButton.onclick = () => {
 
 joinButton.onclick = () => {
     if (!username || !roomID) {
-        notify('enter valid fields')
+        notify('enter valid fields');
+        return;
     }
     joinRoom(username, roomID);
 }
@@ -139,5 +140,6 @@ guess.oninput = () => {
     if(guess.value === answer){
         word.innerHTML = `you're right : ${answer}`;
         guess.disabled = true;
+        socket.emit('increment-correct-answer');
     }
 }

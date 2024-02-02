@@ -40,9 +40,9 @@ io.on('connection', (socket) => {
 
     socket.on('create-room', (data) => {
         if (!rooms[data.roomID]) {
-            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing: false, currentRound: 0, turn: 0, word: '' };
+            rooms[data.roomID] = { creator: socket.id, players: data.players, drawtime: data.drawtime, rounds: data.rounds, users: [socket.id], playing: false, currentRound: 0, turn: 0, word: '', correctAnswers: 0 };
             name[socket.id] = data.username;
-            console.log(rooms[data.roomID].creator);
+            // console.log(rooms[data.roomID].creator);
             socket.join(data.roomID);
             socket.emit('accessGranted')
         }
@@ -112,6 +112,18 @@ io.on('connection', (socket) => {
                 socket.to(data.roomID).emit('drawLine', (coordinates));
             });
 
+            socket.on('increment-correct-answer', () => {
+                // console.log('entered increment-correct-answer')
+                const correctAnswers = rooms[data.roomID].correctAnswers;
+                rooms[data.roomID].correctAnswers = correctAnswers + 1;
+
+                if(rooms[data.roomID].correctAnswers === rooms[data.roomID].players - 1){
+                    io.to(rooms[data.roomID].users[(rooms[data.roomID].turn) - 1]).emit('all-answer-interrupt-writer');
+                    io.to(data.roomID).emit('all-answer-interrupt-guesser');
+                    rooms[data.roomID].correctAnswers = correctAnswers + 1;
+                }
+            })
+
             socket.on('switch-turn', () => {
                 const turn = (rooms[data.roomID].turn) % (rooms[data.roomID].users.length);
                 // console.log('switch-turn');
@@ -139,6 +151,7 @@ io.on('connection', (socket) => {
             })
 
             socket.on('disconnect', () => {
+                // Warning!!! Need to handle this.. The program will crash if a non-creator enters here.......
                 if (!rooms[data.roomID].creator) {
                     console.log('need to handle')                   // Need to handle
                 }
